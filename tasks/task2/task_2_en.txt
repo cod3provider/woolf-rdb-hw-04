@@ -1,0 +1,33 @@
+/-- Fill out table "authors" --/
+insert into authors (author_name) 
+values 
+('Davia Allen'), 
+('James Clear');
+
+
+/-- Fill out table "genres" --/
+insert into genres (genre_name) 
+values 
+('bussiness'), 
+('productivity');
+
+
+/-- Fill out table "books" --/
+insert into books (title, publication_year, author_id, genre_id)
+values 
+('Getting Things Done', 2001, 1, 1), 
+('Atomic Habits', 2018, 2, 2);
+
+
+/-- Fill out table "users" --/
+insert into users (username, email) 
+values 
+('Michael De Santa', 'micheal.desanta@mail.com'), 
+('Franklin Clinton', 'franklin_clinton@mail.com');
+
+
+/-- Fill out table "borrowed_books" --/
+insert into borrowed_books (book_id, user_id, borrow_date, return_date)
+values 
+(1, 1, '2024-01-31', '2024-03-31'), 
+(2, 2, '2024-02-12', '2024-04-01');
