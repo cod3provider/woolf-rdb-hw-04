@@ -1,0 +1,105 @@
+/-- Визначте, скільки рядків ви отримали (за допомогою оператора COUNT). --/
+select count(*) as rows_total 
+from order_details
+inner join orders on order_details.order_id = orders.id
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+inner join customers on orders.customer_id = customers.id
+inner join employees on orders.employee_id = employees.employee_id
+inner join shippers on orders.shipper_id = shippers.id
+inner join suppliers on products.supplier_id = suppliers.id;
+
+
+/-- Змініть декілька операторів INNER на LEFT чи RIGHT. Визначте, що відбувається з кількістю рядків. Чому? --/
+select count(*) as rows_total 
+from order_details
+left join orders on order_details.order_id = orders.id
+left join products on order_details.product_id = products.id
+left join categories on products.category_id = categories.id
+left join customers on orders.customer_id = customers.id
+left join employees on orders.employee_id = employees.employee_id
+left join shippers on orders.shipper_id = shippers.id
+left join suppliers on products.supplier_id = suppliers.id;
+
+
+Чому:
+INNER JOIN повертає лише ті рядки, де є співпадіння в обох таблицях.
+LEFT JOIN повертає всі рядки з лівої таблиці та співпадаючі рядки з правої таблиці. Якщо немає співпадінь, результатом є NULL в правій частині результатів. 
+RIGHT JOIN працює аналогічно, але повертає всі рядки з правої таблиці, а не з лівої.
+Якщо співпадінь не знайдено в лівій таблиці, відповідні стовпці у результаті також будуть NULL.
+
+При зміні INNER JOIN на LEFT JOIN або RIGHT JOIN, кількість може збільшитися, оскільки можна отримати додаткові рядки, які не мають співпадінь в обох таблицях.
+При виконанні запиту RIGHT JOIN сталася помилка, оскільки запит виходить занадто довгим і через це втрачає зв'язок із сервером.
+
+
+select count(*) as rows_total 
+from order_details
+right join orders on order_details.order_id = orders.id
+right join products on order_details.product_id = products.id
+right join categories on products.category_id = categories.id
+right join customers on orders.customer_id = customers.id
+right join employees on orders.employee_id = employees.employee_id
+right join shippers on orders.shipper_id = shippers.id
+right join suppliers on products.supplier_id = suppliers.id;
+
+
+
+
+/-- Оберіть тільки ті рядки, де employee_id > 3 та ≤ 10. --/
+
+select count(*) as rows_total 
+from order_details
+inner join orders on order_details.order_id = orders.id
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+inner join customers on orders.customer_id = customers.id
+inner join employees on orders.employee_id = employees.employee_id
+inner join shippers on orders.shipper_id = shippers.id
+inner join suppliers on products.supplier_id = suppliers.id
+where employees.employee_id > 3 and employees.employee_id <= 10;
+
+
+/-- Згрупуйте за іменем категорії, порахуйте кількість рядків у групі, середню кількість товару (кількість товару знаходиться в order_details.quantity). --/
+select categories.name as categories_name,
+count(*) as rows_total,
+avg(order_details.quantity)
+from order_details
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+group by categories.name;
+
+
+/-- Відфільтруйте рядки, де середня кількість товару більша за 21. --/
+select categories.name as categories_name,
+count(*) as rows_total,
+avg(order_details.quantity) avg_quantity
+from order_details
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+group by categories.name
+having avg_quantity > 21;
+
+
+/-- Відсортуйте рядки за спаданням кількості рядків. --/
+select categories.name as categories_name,
+count(*) as rows_total,
+avg(order_details.quantity) avg_quantity
+from order_details
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+group by categories.name
+having avg_quantity > 21
+order by rows_total desc;
+
+
+/-- Виведіть на екран (оберіть) чотири рядки з пропущеним першим рядком. --/
+select categories.name as categories_name,
+count(*) as rows_total,
+avg(order_details.quantity) avg_quantity
+from order_details
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+group by categories.name
+having avg_quantity > 21
+order by rows_total desc
+limit 4 offset 1;

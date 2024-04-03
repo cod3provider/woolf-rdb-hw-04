@@ -1,0 +1,92 @@
+/-- Determine how many rows you have received (using the COUNT operator). --/
+select count(*) as rows_total 
+from order_details
+inner join orders on order_details.order_id = orders.id
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+inner join customers on orders.customer_id = customers.id
+inner join employees on orders.employee_id = employees.employee_id
+inner join shippers on orders.shipper_id = shippers.id
+inner join suppliers on products.supplier_id = suppliers.id;
+
+
+/-- Change several INNER operators to LEFT or RIGHT. Determine what happens to the number of rows. 
+Why? Write the answer in a text file. --/
+select * from order_details
+inner join orders on order_details.order_id = orders.id
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+inner join customers on orders.customer_id = customers.id
+inner join employees on orders.employee_id = employees.employee_id
+inner join shippers on orders.shipper_id = shippers.id
+inner join suppliers on products.supplier_id = suppliers.id;
+
+
+Why:
+INNER JOIN returns only those rows where there is a match in both tables.
+LEFT JOIN returns all rows from the left table and matching rows from the right table. If there are no matches, the result is NULL in the right part of the results.
+RIGHT JOIN works similarly but returns all rows from the right table, not the left.
+If no matches are found in the left table, the corresponding columns in the result will also be NULL.
+
+When changing INNER JOIN to LEFT JOIN or RIGHT JOIN, the count may increase because additional rows that do not have matches in both tables can be obtained.
+When executing the RIGHT JOIN query, an error occurred because the query became too long, causing it to lose connection with the server.
+
+
+select count(*) as rows_total 
+from order_details
+right join orders on order_details.order_id = orders.id
+right join products on order_details.product_id = products.id
+right join categories on products.category_id = categories.id
+right join customers on orders.customer_id = customers.id
+right join employees on orders.employee_id = employees.employee_id
+right join shippers on orders.shipper_id = shippers.id
+right join suppliers on products.supplier_id = suppliers.id;
+
+
+/-- Select only those rows where employee_id > 3 and ≤ 10. --/
+select count(*) as rows_total 
+from order_details
+inner join orders on order_details.order_id = orders.id
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+inner join customers on orders.customer_id = customers.id
+inner join employees on orders.employee_id = employees.employee_id
+inner join shippers on orders.shipper_id = shippers.id
+inner join suppliers on products.supplier_id = suppliers.id
+where employees.employee_id > 3 and employees.employee_id <= 10;
+
+
+/-- Filter rows where the average quantity of items is greater than 21. --/
+select categories.name as categories_name,
+count(*) as rows_total,
+avg(order_details.quantity) avg_quantity
+from order_details
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+group by categories.name
+having avg_quantity > 21;
+
+
+/-- Sort the rows in descending order by the number of rows. --/
+select categories.name as categories_name,
+count(*) as rows_total,
+avg(order_details.quantity) avg_quantity
+from order_details
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+group by categories.name
+having avg_quantity > 21
+order by rows_total desc;
+
+
+/-- Output (select) four rows with the missing first row. --/
+select categories.name as categories_name,
+count(*) as rows_total,
+avg(order_details.quantity) avg_quantity
+from order_details
+inner join products on order_details.product_id = products.id
+inner join categories on products.category_id = categories.id
+group by categories.name
+having avg_quantity > 21
+order by rows_total desc
+limit 4 offset 1;
